@@ -1,4 +1,18 @@
+import json
+import os
 
+INVENTORY_FILE = "inventory.json"
+
+def load_inventory():
+    """Loads inventory from the JSON file if it exists."""
+    if os.path.exists(INVENTORY_FILE):
+        try:
+            with open(INVENTORY_FILE, "r") as file:
+                inventory = json.load(file)
+            return inventory, True
+        except Exception:
+            return [], False
+    return [], False
 inventory = [
     {"id": "P001", "name": "Laptop", "price": 1200.0, "stock": 15},
     {"id": "P002", "name": "Mouse", "price": 25.5, "stock": 40},
