@@ -58,3 +58,55 @@ class Inventory:
             })
         with open(filename, 'w') as f:
             json.dump(data, f, indent=4)
+def main():
+    inventory = Inventory()
+    inventory.load_inventory('inventory.json')
+
+    while True:
+        print("\n--- Inventory Menu ---")
+        print("1. Display all products")
+        print("2. Add a product")
+        print("3. Update stock")
+        print("4. Search for a product")
+        print("5. Save inventory")
+        print("6. Exit")
+
+        choice = input("Enter choice: ")
+
+        if choice == '1':
+            inventory.display_all()
+        elif choice == '2':
+            pid = input("Enter product ID: ")
+            name = input("Enter name: ")
+            price = float(input("Enter price: "))
+            stock = int(input("Enter stock: "))
+            new_product = Product(pid, name, price, stock)
+            inventory.add_product(new_product)
+            print("Product added successfully.")
+        elif choice == '3':
+            pid = input("Enter product ID to update: ")
+            product = inventory.search_product(pid)
+            if product:
+                qty = int(input("Enter quantity to add (use negative to remove): "))
+                product.update_stock(qty)
+                print("Stock updated successfully.")
+            else:
+                print("Product not found.")
+        elif choice == '4':
+            pid = input("Enter product ID to search: ")
+            product = inventory.search_product(pid)
+            if product:
+                product.display_information()
+            else:
+                print("Product not found.")
+        elif choice == '5':
+            inventory.save_inventory('inventory.json')
+            print("Inventory saved to file.")
+        elif choice == '6':
+            print("Exiting system.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
