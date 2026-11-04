@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
 import json
 import os
 
-class Product:
+class Product(ABC):
     def __init__(self, product_id, name, price, stock):
         self.__product_id = product_id
         self.__name = name
@@ -17,96 +18,38 @@ class Product:
         self.__stock += quantity
 
     def display_information(self):
-        print(f"ID: {self.__product_id} | Name: {self.__name} | Price: ${self.__price:.2f} | Stock: {self.__stock}")
-class Inventory:
-    def __init__(self):
-        self.products = []
+        print(f"ID: {self.__product_id} | Name: {self.__name} | Price: ${self.__price:.2f} | Stock: {self.__stock}", end="")
 
-    def add_product(self, product):
-        self.products.append(product)
+    @abstractmethod
+    def get_fulfilment_info(self):
+        pass
 
-    def search_product(self, product_id):
-        for p in self.products:
-            if p.get_product_id() == product_id:
-                return p
-        return None
 
-    def display_all(self):
-        if not self.products:
-            print("No products in inventory.")
-        for p in self.products:
-            p.display_information()
+class PhysicalProduct(Product):
+    def __init__(self, product_id, name, price, stock, weight):
+        super().__init__(product_id, name, price, stock)
+        self.__weight = float(weight)
 
-    def load_inventory(self, filename):
-        if os.path.exists(filename):
-            with open(filename, 'r') as f:
-                data = json.load(f)
-                for item in data:
-                    product = Product(item['product_id'], item['name'], item['price'], item['stock'])
-                    self.add_product(product)
-        else:
-            print("No existing inventory found. Starting fresh.")
+    def get_weight(self): return self.__weight
 
-    def save_inventory(self, filename):
-        data = []
-        for p in self.products:
-            data.append({
-                "product_id": p.get_product_id(),
-                "name": p.get_name(),
-                "price": p.get_price(),
-                "stock": p.get_stock()
-            })
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
-def main():
-    inventory = Inventory()
-    inventory.load_inventory('inventory.json')
+    def display_information(self):
+        super().display_information()
+        print(f" | Weight: {self.__weight}kg | Fulfilment: {self.get_fulfilment_info()}")
 
-    while True:
-        print("\n--- Inventory Menu ---")
-        print("1. Display all products")
-        print("2. Add a product")
-        print("3. Update stock")
-        print("4. Search for a product")
-        print("5. Save inventory")
-        print("6. Exit")
+    def get_fulfilment_info(self):
+        return "Requires physical shipping."
 
-        choice = input("Enter choice: ")
 
-        if choice == '1':
-            inventory.display_all()
-        elif choice == '2':
-            pid = input("Enter product ID: ")
-            name = input("Enter name: ")
-            price = float(input("Enter price: "))
-            stock = int(input("Enter stock: "))
-            new_product = Product(pid, name, price, stock)
-            inventory.add_product(new_product)
-            print("Product added successfully.")
-        elif choice == '3':
-            pid = input("Enter product ID to update: ")
-            product = inventory.search_product(pid)
-            if product:
-                qty = int(input("Enter quantity to add (use negative to remove): "))
-                product.update_stock(qty)
-                print("Stock updated successfully.")
-            else:
-                print("Product not found.")
-        elif choice == '4':
-            pid = input("Enter product ID to search: ")
-            product = inventory.search_product(pid)
-            if product:
-                product.display_information()
-            else:
-                print("Product not found.")
-        elif choice == '5':
-            inventory.save_inventory('inventory.json')
-            print("Inventory saved to file.")
-        elif choice == '6':
-            print("Exiting system.")
-            break
-        else:
-            print("Invalid choice. Please try again.")
+class DigitalProduct(Product):
+    def __init__(self, product_id, name, price, stock, download_size):
+        super().__init__(product_id, name, price, stock)
+        self.__download_size = float(download_size)
 
-if __name__ == "__main__":
-    main()
+    def get_download_size(self): return self.__download_size
+
+    def display_information(self):
+        super().display_information()
+        print(f" | Download Size: {self.__download_size}MB | Fulfilment: {self.get_fulfilment_info()}")
+
+    def get_fulfilment_info(self):
+        return "Delivered digitally via download link."
