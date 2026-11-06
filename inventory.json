@@ -1,8 +1,10 @@
 [
     {
-        "product_id": "122",
-        "name": "car freshener",
-        "price": 12.0,
-        "stock": 345
+        "product_id": "123",
+        "name": "website",
+        "price": 500.0,
+        "stock": 1,
+        "type": "digital",
+        "download_size": 150.0
     }
 ]

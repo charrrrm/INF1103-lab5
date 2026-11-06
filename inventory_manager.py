@@ -2,6 +2,15 @@ from abc import ABC, abstractmethod
 import json
 import os
 
+class Supplier:
+    def __init__(self, supplier_id: str, name: str, contact_email: str):
+        self.supplier_id: str = supplier_id
+        self.name: str = name
+        self.contact_email: str = contact_email
+
+    def display_information(self) -> None:
+        print(f"Supplier ID: {self.supplier_id} | Name: {self.name} | Email: {self.contact_email}")
+
 class Product(ABC):
     def __init__(self, product_id, name, price, stock):
         self.__product_id = product_id
